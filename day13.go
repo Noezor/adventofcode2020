@@ -30,8 +30,15 @@ func partB(busIds, offsets []int) int {
 	for x < 0 {
 		x += n
 	}
-	fmt.Println("theoritically OK ?", verifiesChineseReminder(x, offsets, busIds))
 	return x
+}
+
+func bruteforceChineseSolution(startingValue int, increment int, busIds []int, offsets []int) int {
+	currentValue := startingValue
+	for !verifiesChineseReminder(currentValue, offsets, busIds) {
+		currentValue += increment
+	}
+	return currentValue
 }
 
 func closestBusToTimestamp(timestamp int, busId int) int {
@@ -66,11 +73,9 @@ func chineseReminderSolution(a, n []int) (int, int) {
 	}
 	aCurrent, nCurrent := a[0], n[0]
 	for i := 1; i < len(a); i++ {
-		fmt.Println(aCurrent, nCurrent, a[i], n[i])
 		x := chineseReminderSolutionPair(aCurrent, nCurrent, a[i], n[i])
 		nCurrent = nCurrent * n[i]
 		aCurrent = x % nCurrent
-		fmt.Println(verifiesChineseReminder(aCurrent, a[:i+1], n[:i+1]), aCurrent, a[:i+1], n[:i+1])
 	}
 	return nCurrent, aCurrent
 }
@@ -151,19 +156,21 @@ func main() {
 		fmt.Println("Error, expected", expectedOutput, "Got ", result)
 		return
 	}
-	fmt.Println(verifiesChineseReminder(3417, []int{0, 11, 16}, []int{17, 13, 19}))
 	if result := partB(parseStringB(contents)); result != expectedOutputB {
 		fmt.Println("Error, expected", expectedOutputB, "Got ", result)
 		return
 	}
 	fmt.Println("Passed tests")
 
-	fmt.Println(chineseReminderSolutionPair(4241072787, 5010216523, 623, 677))
 	bytes, err := ioutil.ReadFile(*inputFile)
 	if err != nil {
 		return
 	}
 	contents = string(bytes)
 	fmt.Println(partA(parseStringA(contents)))
-	fmt.Println(partB(parseStringB(contents)))
+
+	fmt.Println("partB with constructive algorithm", partB(parseStringB(contents)))
+	// magic values from the result of chinese reminder for the first 6 elements :
+	busIds, offsets := parseStringB(contents)
+	fmt.Println("Correct solution ", bruteforceChineseSolution(4241072787, 5010216523, busIds, offsets))
 }
