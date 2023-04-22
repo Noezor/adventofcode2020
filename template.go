@@ -35,3 +35,4 @@ func main(){
 	}
 	fmt.Println(sum)
 }
+LOLtest
